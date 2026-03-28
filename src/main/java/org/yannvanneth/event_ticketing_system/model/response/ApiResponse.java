@@ -1,5 +1,6 @@
 package org.yannvanneth.event_ticketing_system.model.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
@@ -8,6 +9,7 @@ import java.time.Instant;
 
 @Data
 @Builder
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiResponse<T> {
     private String message;
     private String status;
@@ -17,7 +19,16 @@ public class ApiResponse<T> {
     public static <T> ApiResponse<T> success(String message, T payload) {
         return ApiResponse.<T>builder()
                 .message(message)
-                .status(String.valueOf(HttpStatus.OK.value()))
+                .status(HttpStatus.OK.name())
+                .payload(payload)
+                .timestamp(Instant.now())
+                .build();
+    }
+
+    public static <T> ApiResponse<T> created(String message, T payload) {
+        return ApiResponse.<T>builder()
+                .message(message)
+                .status(HttpStatus.CREATED.name())
                 .payload(payload)
                 .timestamp(Instant.now())
                 .build();
