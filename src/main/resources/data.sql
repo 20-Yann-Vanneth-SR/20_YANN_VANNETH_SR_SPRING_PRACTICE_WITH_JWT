@@ -26,3 +26,5 @@ insert into event_attendee (attendee_id, event_id) values
                                                        (4, 2),
                                                        (5, 3),
                                                        (1, 3);
+
+

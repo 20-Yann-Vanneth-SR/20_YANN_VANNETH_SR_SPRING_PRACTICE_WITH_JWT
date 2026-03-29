@@ -51,5 +51,4 @@ public class ApiResponse<T> {
                 .timestamp(Instant.now())
                 .build();
     }
-
 }

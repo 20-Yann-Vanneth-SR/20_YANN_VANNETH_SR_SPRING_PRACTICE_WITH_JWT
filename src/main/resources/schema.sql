@@ -21,6 +21,11 @@ create table event_attendee(
     attendee_id integer not null,
     event_id integer not null,
     primary key (attendee_id, event_id),
-    foreign key (attendee_id) references attendees(attendee_id),
-    foreign key (event_id) references events(event_id)
+    foreign key (attendee_id) references attendees(attendee_id) on delete cascade,
+    foreign key (event_id) references events(event_id) on delete cascade
 );
+
+drop table event_attendee;
+drop table events;
+drop table attendees;
+drop table venues;
