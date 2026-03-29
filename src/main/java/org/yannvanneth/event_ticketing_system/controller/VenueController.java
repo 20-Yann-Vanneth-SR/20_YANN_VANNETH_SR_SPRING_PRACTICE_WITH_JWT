@@ -1,9 +1,11 @@
 package org.yannvanneth.event_ticketing_system.controller;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.yannvanneth.event_ticketing_system.model.entity.VenueModel;
 import org.yannvanneth.event_ticketing_system.model.request.VenueRequest;
@@ -15,12 +17,15 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/venues")
 @RequiredArgsConstructor
+@Validated
 public class VenueController {
 
     private final VenueService venueService;
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<VenueModel>>>  getVenues(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer size) {
+    public ResponseEntity<ApiResponse<List<VenueModel>>> getVenues(
+            @RequestParam(defaultValue = "1") @Positive(message = "page must be greater than 0") Integer page,
+            @RequestParam(defaultValue = "10") @Positive(message = "size must be greater than 0") Integer size) {
 
         List<VenueModel> venues = venueService.getAllVenues(page, size);
 

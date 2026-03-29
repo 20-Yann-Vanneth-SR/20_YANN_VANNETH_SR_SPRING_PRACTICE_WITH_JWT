@@ -20,14 +20,6 @@ public class AttendeeServiceImpl implements AttendeeService {
     @Override
     public List<AttendeeModel> getAllAttendees(Integer page, Integer size) {
 
-        if (page == null || size == null) {
-            throw new BadRequestException("Parameter 'page' and 'size' can't be null.");
-        }
-
-        if (page < 1 || size < 1) {
-            throw new BadRequestException("Parameter 'page' and 'size' can't be negative.");
-        }
-
         return attendeeRepository.getAllAttendees(page, size);
     }
 

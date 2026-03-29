@@ -26,15 +26,6 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public List<EventModel> getAllEvents(Integer page, Integer size) {
-
-        if (page == null || size == null) {
-            throw new BadRequestException("Parameter 'page' and 'size' can't be null.");
-        }
-
-        if (page < 1 || size < 1) {
-            throw new BadRequestException("Parameter 'page' and 'size' can't be negative.");
-        }
-
         return eventRepository.getAllEvents(page, size);
     }
 

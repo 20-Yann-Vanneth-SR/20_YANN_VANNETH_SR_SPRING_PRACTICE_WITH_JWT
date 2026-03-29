@@ -1,5 +1,7 @@
 package org.yannvanneth.event_ticketing_system.exception;
 
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
@@ -48,9 +50,24 @@ public class GlobalException {
         }
 
         ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
-        problemDetail.setProperty("payload", errors);
+        problemDetail.setProperty("errors", errors);
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(problemDetail);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ProblemDetail> handleConstraintViolationException(ConstraintViolationException ex) {
+
+        Map<String, String> errors = new HashMap<>();
+
+        for(ConstraintViolation<?> violation : ex.getConstraintViolations()){
+            errors.put(violation.getPropertyPath().toString(), violation.getMessage());
+        }
+
+        ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+        problemDetail.setProperty("errors", errors);
+
+        return ResponseEntity.badRequest().body(problemDetail);
     }
 
     @ExceptionHandler(NotFoundException.class)
