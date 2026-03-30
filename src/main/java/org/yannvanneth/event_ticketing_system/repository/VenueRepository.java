@@ -20,6 +20,10 @@ public interface VenueRepository {
     @Select("select venue_id, venue_name, location from venues where venue_id = #{id}")
     VenueModel getVenueById(Long id);
 
+    @Result(property = "venueName", column = "venue_name")
+    @Select("select venue_name from venues where lower(venue_name) = lower(#{name})")
+    String getVenueByName(String name);
+
     @ResultMap("venueMapper")
     @Select("""
        insert into venues values (default, #{req.venueName}, #{req.location})

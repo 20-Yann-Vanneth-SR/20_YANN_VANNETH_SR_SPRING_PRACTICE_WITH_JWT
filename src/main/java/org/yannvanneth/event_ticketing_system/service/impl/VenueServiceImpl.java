@@ -36,6 +36,13 @@ public class VenueServiceImpl implements VenueService {
 
     @Override
     public VenueModel saveVenue(VenueRequest request) {
+
+        String exist = venueRepository.getVenueByName(request.getVenueName());
+
+        if (exist != null) {
+            throw new BadRequestException("Venue with name " + exist + " already exists.");
+        }
+
         return venueRepository.saveVenue(request);
     }
 
@@ -46,6 +53,10 @@ public class VenueServiceImpl implements VenueService {
 
         if (venue == null) {
             throw new NotFoundException("Venue with id " + id + " not found.");
+        }
+
+        if (venueRepository.getVenueByName(request.getVenueName()) != null) {
+            throw new BadRequestException("Venue with name " + request.getVenueName() + " already exists.");
         }
 
         return venue;

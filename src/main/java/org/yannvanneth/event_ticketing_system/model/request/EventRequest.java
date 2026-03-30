@@ -1,5 +1,6 @@
 package org.yannvanneth.event_ticketing_system.model.request;
 
+import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -19,9 +20,9 @@ import java.util.List;
 public class EventRequest {
     @NotBlank(message = "Event name cannot be blank")
     @Size(min = 4, max = 50, message = "Event name must be between 4 and 50 characters")
-    @Pattern(regexp = "^[A-Za-z0-9 ]+$", message = "Only letters and number are allowed")
     private String eventName;
 
+    @Future(message = "Event date must be in the future")
     private Date eventDate;
 
     private Long venueId;

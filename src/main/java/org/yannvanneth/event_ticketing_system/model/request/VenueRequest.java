@@ -13,7 +13,6 @@ import lombok.NoArgsConstructor;
 public class VenueRequest {
     @NotBlank(message = "Venue name cannot be blank")
     @Size(min = 4, max = 50, message = "Venue name must be between 4 and 50 characters")
-    @Pattern(regexp = "^[A-Za-z][A-Za-z0-9 ]+$", message = "Only letters and numbers are allowed and should be start with any letters")
     private String venueName;
 
     @NotBlank(message = "location cannot be blank")

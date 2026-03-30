@@ -3,7 +3,6 @@ package org.yannvanneth.event_ticketing_system.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.yannvanneth.event_ticketing_system.exception.BadRequestException;
 import org.yannvanneth.event_ticketing_system.exception.NotFoundException;
 import org.yannvanneth.event_ticketing_system.model.entity.EventModel;
 import org.yannvanneth.event_ticketing_system.model.request.EventRequest;

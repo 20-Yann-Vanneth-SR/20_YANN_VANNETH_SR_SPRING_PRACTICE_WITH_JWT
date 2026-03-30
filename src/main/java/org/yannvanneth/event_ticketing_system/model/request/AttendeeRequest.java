@@ -16,7 +16,6 @@ import lombok.NoArgsConstructor;
 public class AttendeeRequest {
     @NotBlank(message = "Attendee name cannot be blank")
     @Size(min = 4, max = 50, message = "Attendee name must be between 4 and 50 characters")
-    @Pattern(regexp = "^[A-Za-z ]+$", message = "Only letters are allowed")
     private String attendeeName;
 
     @Email

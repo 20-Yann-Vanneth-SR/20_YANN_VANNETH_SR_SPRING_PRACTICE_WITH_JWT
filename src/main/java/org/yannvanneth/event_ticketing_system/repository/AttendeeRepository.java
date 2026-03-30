@@ -15,6 +15,19 @@ public interface AttendeeRepository {
     @Select("select attendee_id, attendee_name, email from attendees limit #{size} offset #{page}")
     List<AttendeeModel> getAllAttendees(Integer page, Integer size);
 
+    @Result(property = "attendeeName", column = "attendee_name")
+    @Select("""
+        select attendee_name from attendees
+         where lower(attendee_name) = lower(#{name})
+    """)
+    String getAttendeeByName(String name);
+
+    @Select("""
+        select email from attendees
+         where lower(email) = lower(#{email})
+    """)
+    String getAttendeeByEmail(String email);
+
     @ResultMap("attendeeMapper")
     @Select("select attendee_id, attendee_name, email from attendees where attendee_id = #{id}")
     AttendeeModel getAttendeeById(Long id);

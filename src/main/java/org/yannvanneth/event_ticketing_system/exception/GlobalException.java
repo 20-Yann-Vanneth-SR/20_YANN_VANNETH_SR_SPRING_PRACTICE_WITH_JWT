@@ -49,7 +49,7 @@ public class GlobalException {
             errors.put(fieldError.getField(),fieldError.getDefaultMessage());
         }
 
-        ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Invalid JSON in request body. Please check syntax.");
         problemDetail.setProperty("errors", errors);
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(problemDetail);
@@ -80,5 +80,11 @@ public class GlobalException {
     public ResponseEntity<ProblemDetail> badRequest(BadRequestException e) {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, e.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(problemDetail);
+    }
+
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<ProblemDetail> conflict(ConflictException e) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, e.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(problemDetail);
     }
 }

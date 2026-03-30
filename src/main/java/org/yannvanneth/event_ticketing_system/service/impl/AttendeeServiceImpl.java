@@ -2,7 +2,8 @@ package org.yannvanneth.event_ticketing_system.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.yannvanneth.event_ticketing_system.exception.BadRequestException;
+import org.springframework.transaction.annotation.Transactional;
+import org.yannvanneth.event_ticketing_system.exception.ConflictException;
 import org.yannvanneth.event_ticketing_system.exception.NotFoundException;
 import org.yannvanneth.event_ticketing_system.model.entity.AttendeeModel;
 import org.yannvanneth.event_ticketing_system.model.request.AttendeeRequest;
@@ -37,9 +38,22 @@ public class AttendeeServiceImpl implements AttendeeService {
 
     @Override
     public AttendeeModel saveAttendee(AttendeeRequest request) {
+
+        String email = attendeeRepository.getAttendeeByEmail(request.getEmail());
+        String name = attendeeRepository.getAttendeeByName(request.getAttendeeName());
+
+        if (name != null) {
+            throw new ConflictException("Attendee with name " + name + " already exists.");
+        }
+
+        if (email != null) {
+            throw new ConflictException("Attendee with email " + email + " already exists.");
+        }
+
         return attendeeRepository.saveAttendee(request);
     }
 
+    @Transactional
     @Override
     public AttendeeModel updateAttendeeById(Long id, AttendeeRequest request) {
 
@@ -47,6 +61,13 @@ public class AttendeeServiceImpl implements AttendeeService {
 
         if (attendee == null) {
             throw new NotFoundException("Attendee with id " + id + " not found.");
+        }
+
+        if (attendeeRepository.getAttendeeByEmail(request.getEmail()) != null) {
+            throw new ConflictException("Attendee with email " + request.getEmail() + " already exists.");
+        }
+        if(attendeeRepository.getAttendeeByName(request.getAttendeeName()) != null) {
+            throw new ConflictException("Attendee with name " + request.getAttendeeName() + " already exists.");
         }
 
         return attendee;
