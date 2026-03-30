@@ -35,7 +35,7 @@ public class VenueController {
     }
 
     @GetMapping("/{venueId}")
-    public ResponseEntity<ApiResponse<VenueModel>> getVenueById(@PathVariable("venueId") Long id) {
+    public ResponseEntity<ApiResponse<VenueModel>> getVenueById(@PathVariable("venueId") @Positive(message = "must be greater than 0") Long id) {
 
         ApiResponse<VenueModel> response = ApiResponse.success(String.format("Retrieved venue with id %d successfully", id), venueService.getVenueById(id));
 
@@ -51,7 +51,9 @@ public class VenueController {
     }
 
     @PutMapping("/{venueId}")
-    public ResponseEntity<ApiResponse<VenueModel>> updateVenueById(@PathVariable("venueId") Long id,@Valid  @RequestBody VenueRequest request) {
+    public ResponseEntity<ApiResponse<VenueModel>> updateVenueById(
+            @PathVariable("venueId") @Positive(message = "must be greater than 0") Long id,
+            @Valid  @RequestBody VenueRequest request) {
 
         ApiResponse<VenueModel> response = ApiResponse.success(String.format("Updated venue with id %d successfully", id), venueService.updateVenueById(id, request));
 
@@ -59,7 +61,8 @@ public class VenueController {
     }
 
     @DeleteMapping("/{venueId}")
-    public ResponseEntity<ApiResponse<Void>> deleteVenueById(@PathVariable("venueId") Long id) {
+    public ResponseEntity<ApiResponse<Void>> deleteVenueById(
+            @PathVariable("venueId") @Positive(message = "must be greater than 0") Long id) {
 
         ApiResponse<Void> response = ApiResponse.success(String.format("Deleted venue with id %d successfully", id), venueService.deleteVenueById(id));
 

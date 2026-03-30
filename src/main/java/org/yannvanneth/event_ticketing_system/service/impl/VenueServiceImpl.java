@@ -3,6 +3,7 @@ package org.yannvanneth.event_ticketing_system.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.yannvanneth.event_ticketing_system.exception.BadRequestException;
+import org.yannvanneth.event_ticketing_system.exception.ConflictException;
 import org.yannvanneth.event_ticketing_system.exception.NotFoundException;
 import org.yannvanneth.event_ticketing_system.model.entity.VenueModel;
 import org.yannvanneth.event_ticketing_system.model.request.VenueRequest;
@@ -40,7 +41,7 @@ public class VenueServiceImpl implements VenueService {
         String exist = venueRepository.getVenueByName(request.getVenueName());
 
         if (exist != null) {
-            throw new BadRequestException("Venue with name " + exist + " already exists.");
+            throw new ConflictException("Venue with name " + exist + " already exists.");
         }
 
         return venueRepository.saveVenue(request);
@@ -49,14 +50,14 @@ public class VenueServiceImpl implements VenueService {
     @Override
     public VenueModel updateVenueById(Long id, VenueRequest request) {
 
+        if (venueRepository.getVenueByName(request.getVenueName()) != null) {
+            throw new ConflictException("Venue with name " + request.getVenueName() + " already exists.");
+        }
+
         VenueModel venue = venueRepository.updateVenueById(id, request);
 
         if (venue == null) {
             throw new NotFoundException("Venue with id " + id + " not found.");
-        }
-
-        if (venueRepository.getVenueByName(request.getVenueName()) != null) {
-            throw new BadRequestException("Venue with name " + request.getVenueName() + " already exists.");
         }
 
         return venue;

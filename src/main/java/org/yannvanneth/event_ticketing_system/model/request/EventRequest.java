@@ -1,14 +1,13 @@
 package org.yannvanneth.event_ticketing_system.model.request;
 
-import jakarta.validation.constraints.Future;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
@@ -19,13 +18,17 @@ import java.util.List;
 @AllArgsConstructor
 public class EventRequest {
     @NotBlank(message = "Event name cannot be blank")
-    @Size(min = 4, max = 50, message = "Event name must be between 4 and 50 characters")
+    @JsonProperty(required = true)
     private String eventName;
 
+    @JsonProperty(required = true)
     @Future(message = "Event date must be in the future")
-    private Date eventDate;
+    @NotNull(message = "Event Date cannot be null")
+    private LocalDate eventDate;
 
+    @JsonProperty(required = true)
     private Long venueId;
 
+    @JsonProperty(required = true)
     private List<Long> attendeeIds;
 }

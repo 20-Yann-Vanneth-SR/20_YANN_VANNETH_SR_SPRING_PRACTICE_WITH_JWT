@@ -5,13 +5,16 @@ import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.sql.SQLException;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,6 +39,20 @@ public class GlobalException {
         message = e.getMessage();
 
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, message);
+        problemDetail.setProperty("timestamp", Instant.now());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(problemDetail);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ProblemDetail> handleMalformedJson(HttpMessageNotReadableException e) {
+
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
+                HttpStatus.BAD_REQUEST,
+                "Invalid JSON in request body. Please check syntax."
+        );
+        problemDetail.setType(URI.create("http://localhost:8080/errors/malformed-json"));
+        problemDetail.setProperty("timestamp", Instant.now());
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(problemDetail);
     }
@@ -49,8 +66,9 @@ public class GlobalException {
             errors.put(fieldError.getField(),fieldError.getDefaultMessage());
         }
 
-        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Invalid JSON in request body. Please check syntax.");
+        ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
         problemDetail.setProperty("errors", errors);
+        problemDetail.setProperty("timestamp", Instant.now());
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(problemDetail);
     }
@@ -66,6 +84,7 @@ public class GlobalException {
 
         ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
         problemDetail.setProperty("errors", errors);
+        problemDetail.setProperty("timestamp", Instant.now());
 
         return ResponseEntity.badRequest().body(problemDetail);
     }
@@ -73,18 +92,23 @@ public class GlobalException {
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ProblemDetail> notFound(NotFoundException e) {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, e.getMessage());
+        problemDetail.setProperty("timestamp", Instant.now());
+        problemDetail.setType(URI.create("http://localhost:8080/errors/not-found"));
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(problemDetail);
     }
 
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<ProblemDetail> badRequest(BadRequestException e) {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, e.getMessage());
+        problemDetail.setProperty("timestamp", Instant.now());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(problemDetail);
     }
 
     @ExceptionHandler(ConflictException.class)
     public ResponseEntity<ProblemDetail> conflict(ConflictException e) {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, e.getMessage());
+        problemDetail.setProperty("timestamp", Instant.now());
+        problemDetail.setType(URI.create("http://localhost:8080/errors/duplicate-user"));
         return ResponseEntity.status(HttpStatus.CONFLICT).body(problemDetail);
     }
 }

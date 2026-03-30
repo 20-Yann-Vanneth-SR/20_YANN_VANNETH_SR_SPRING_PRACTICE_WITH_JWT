@@ -9,6 +9,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.yannvanneth.event_ticketing_system.model.entity.AttendeeModel;
 import org.yannvanneth.event_ticketing_system.model.request.AttendeeRequest;
+import org.yannvanneth.event_ticketing_system.model.request.AttendeeUpdateRequest;
 import org.yannvanneth.event_ticketing_system.model.response.ApiResponse;
 import org.yannvanneth.event_ticketing_system.service.AttendeeService;
 
@@ -51,7 +52,7 @@ public class AttendeeController {
     }
 
     @PutMapping("/{attendeeId}")
-    public ResponseEntity<ApiResponse<AttendeeModel>> updateAttendeeById(@PathVariable("attendeeId") Long id,@Valid  @RequestBody AttendeeRequest request) {
+    public ResponseEntity<ApiResponse<AttendeeModel>> updateAttendeeById(@PathVariable("attendeeId") Long id,@Valid  @RequestBody AttendeeUpdateRequest request) {
 
         ApiResponse<AttendeeModel> response = ApiResponse.success(String.format("Updated attendee with id %d successfully", id), attendeeService.updateAttendeeById(id, request));
 
