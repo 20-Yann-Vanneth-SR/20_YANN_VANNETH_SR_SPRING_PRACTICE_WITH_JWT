@@ -3,6 +3,7 @@ package org.yannvanneth.event_ticketing_system.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.yannvanneth.event_ticketing_system.exception.ConflictException;
 import org.yannvanneth.event_ticketing_system.exception.NotFoundException;
 import org.yannvanneth.event_ticketing_system.model.entity.EventModel;
 import org.yannvanneth.event_ticketing_system.model.request.EventRequest;
@@ -25,7 +26,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public List<EventModel> getAllEvents(Integer page, Integer size) {
-        return eventRepository.getAllEvents(page, size);
+        return eventRepository.getAllEvents((page-1) * size, size);
     }
 
     @Override
@@ -44,6 +45,12 @@ public class EventServiceImpl implements EventService {
     @Override
     public EventModel saveEvent(EventRequest request) {
 
+        Boolean isExist = eventRepository.getEventByNameAndDate(request.getEventName(), request.getEventDate());
+
+        if (isExist) {
+            throw new ConflictException("Event name already exists on this date");
+        }
+
         venueService.getVenueById(request.getVenueId());
 
         EventModel event = eventRepository.saveEvent(request);
@@ -60,6 +67,12 @@ public class EventServiceImpl implements EventService {
     @Override
     public EventModel updateEventById(Long id, EventRequest request) {
 
+        Boolean isExist = eventRepository.getEventByNameAndDate(request.getEventName(), request.getEventDate());
+
+        if (isExist) {
+            throw new ConflictException("Event name already exists on this date");
+        }
+
         EventModel event = this.getEventById(id);
 
         eventAttendeeRepository.deleteAllByEventId(event.getEventId());
@@ -70,7 +83,7 @@ public class EventServiceImpl implements EventService {
             eventAttendeeRepository.save(event.getEventId(), attendeeId);
         }
 
-        return event;
+        return this.getEventById(event.getEventId());
     }
 
     @Override

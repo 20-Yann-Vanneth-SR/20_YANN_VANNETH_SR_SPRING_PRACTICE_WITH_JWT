@@ -24,7 +24,7 @@ create table event_attendee(
     foreign key (attendee_id) references attendees(attendee_id) on delete cascade,
     foreign key (event_id) references events(event_id) on delete cascade
 );
-
+--
 -- drop table event_attendee;
 -- drop table events;
 -- drop table attendees;

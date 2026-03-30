@@ -4,6 +4,7 @@ import org.apache.ibatis.annotations.*;
 import org.yannvanneth.event_ticketing_system.model.entity.EventModel;
 import org.yannvanneth.event_ticketing_system.model.request.EventRequest;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Mapper
@@ -25,6 +26,13 @@ public interface EventRepository {
     @ResultMap("eventMapper")
     @Select("select event_id, event_name, event_date, venue_id from events where event_id = #{id}")
     EventModel getEventById(Long id);
+
+    @Select("""
+      select exists(select event_name, event_date from events
+          where lower(event_name) = lower(#{eventName})
+          and event_date = #{eventDate})
+    """)
+    Boolean getEventByNameAndDate(String eventName, LocalDate eventDate);
 
     @ResultMap("eventMapper")
     @Select("""

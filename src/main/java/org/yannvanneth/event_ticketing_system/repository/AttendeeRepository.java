@@ -3,6 +3,7 @@ package org.yannvanneth.event_ticketing_system.repository;
 import org.apache.ibatis.annotations.*;
 import org.yannvanneth.event_ticketing_system.model.entity.AttendeeModel;
 import org.yannvanneth.event_ticketing_system.model.request.AttendeeRequest;
+import org.yannvanneth.event_ticketing_system.model.request.AttendeeUpdateRequest;
 
 import java.util.List;
 
@@ -15,16 +16,11 @@ public interface AttendeeRepository {
     @Select("select attendee_id, attendee_name, email from attendees limit #{size} offset #{page}")
     List<AttendeeModel> getAllAttendees(Integer page, Integer size);
 
-    @Result(property = "attendeeName", column = "attendee_name")
-    @Select("""
-        select attendee_name from attendees
-         where lower(attendee_name) = lower(#{name})
-    """)
+    @Select("select attendee_name from attendees where lower(attendee_name) = lower(#{name})")
     String getAttendeeByName(String name);
 
     @Select("""
-        select email from attendees
-         where lower(email) = lower(#{email})
+        select email from attendees where lower(email) = lower(#{email})
     """)
     String getAttendeeByEmail(String email);
 
@@ -41,12 +37,11 @@ public interface AttendeeRepository {
 
     @ResultMap("attendeeMapper")
     @Select("""
-       update attendees set attendee_name = #{req.attendeeName},
-                         email = #{req.email}
-                     where attendee_id = #{id}
+       update attendees set attendee_name = #{req.attendeeName}
+                        where attendee_id = #{id}
        returning attendee_id, attendee_name, email;
     """)
-    AttendeeModel updateAttendeeById(Long id,@Param("req") AttendeeRequest request);
+    AttendeeModel updateAttendeeById(Long id,@Param("req") AttendeeUpdateRequest request);
 
     @ResultMap("attendeeMapper")
     @Select("""
